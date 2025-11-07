@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 
-// Load environment variables (optional but good practice)
+// Load environment variables
 dotenv.config();
 
 import Product from "./models/productModel.js";
@@ -141,4 +141,4 @@ app.get("/", (req, res) => {
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(` Server running on port ${PORT}`));

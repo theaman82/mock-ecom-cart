@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema(
     shortDescription: {
       type: String,
       trim: true,
-      maxlength: 200, // optional: limit short desc length
+      maxlength: 200, 
     },
     price: {
       type: Number,
@@ -23,7 +23,7 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     image: {
-      type: String, // store image URL or file path
+      type: String, 
       default: "",
     },
     category: {

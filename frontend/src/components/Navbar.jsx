@@ -8,7 +8,7 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
 
-  // 🛒 Fetch cart count from localStorage (or wherever your cart is stored)
+  //  Fetch cart count from localStorage (or wherever your cart is stored)
   useEffect(() => {
     const updateCartCount = () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -55,7 +55,7 @@ console.log(cartCount);
             Products
           </NavLink>
 
-          {/* 🛒 Cart with count badge */}
+          {/*  Cart with count badge */}
           <div className="relative">
             <NavLink to="/cart" className={navLinkClasses}>
               Cart

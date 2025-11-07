@@ -320,7 +320,6 @@ const Cart = () => {
                 >
                   Close
                 </button>
-                
               </div>
             </div>
           </div>

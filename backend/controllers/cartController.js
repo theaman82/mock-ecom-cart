@@ -1,6 +1,6 @@
 import Cart from "../models/cartModel.js";
 
-// 🛒 Get Cart
+//  Get Cart
 export const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne().populate({
@@ -37,7 +37,7 @@ export const getCart = async (req, res) => {
   }
 };
 
-// ➕ Add to Cart
+//  Add to Cart
 export const addToCart = async (req, res) => {
   try {
     const { productId, qty, replace = false } = req.body;
@@ -68,7 +68,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// ❌ Remove from Cart
+//  Remove from Cart
 export const removeFromCart = async (req, res) => {
   try {
     const { id } = req.params;
