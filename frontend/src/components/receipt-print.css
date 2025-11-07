@@ -1,0 +1,17 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .receipt-modal,
+  .receipt-modal * {
+    visibility: visible;
+  }
+  .receipt-modal {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .receipt-actions {
+    display: none;
+  }
+}

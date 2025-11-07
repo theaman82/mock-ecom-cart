@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getCart, removeFromCart, checkout, addToCart } from "../api";
 import { toast } from "react-hot-toast";
+import "./receipt-print.css";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -36,17 +37,55 @@ const Cart = () => {
     refreshCart();
   };
 
-  const handleCheckout = async () => {
-    const formattedCart = cart.map((item) => ({
-      productId: item.productId._id,
-      name: item.productId.name,
-      price: item.productId.discountPrice || item.productId.price,
-      qty: item.qty,
-    }));
+  const [errors, setErrors] = useState({ name: "", email: "" });
 
-    const res = await checkout({ cartItems: formattedCart, name, email });
-    setReceipt(res.data);
-    refreshCart();
+  const validateForm = () => {
+    const newErrors = { name: "", email: "" };
+    let isValid = true;
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Please enter a valid email";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleCheckout = async () => {
+    if (!validateForm()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      const formattedCart = cart.map((item) => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        price: item.productId.discountPrice || item.productId.price,
+        qty: item.qty,
+      }));
+
+      const res = await checkout({ cartItems: formattedCart, name, email });
+      setReceipt(res.data);
+      refreshCart();
+      toast.success("Checkout successful!");
+      
+      // Clear form
+      setName("");
+      setEmail("");
+      setErrors({ name: "", email: "" });
+    } catch (error) {
+      toast.error("Checkout failed. Please try again.");
+    }
   };
 
   return (
@@ -172,43 +211,128 @@ const Cart = () => {
 
             <h4 className="font-semibold mb-2 text-teal-700">Checkout</h4>
             <div className="flex flex-col gap-3 mb-4">
-              <input
-                type="text"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border border-teal-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border border-teal-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              />
+              <div>
+                <input
+                  type="text"
+                  placeholder="Name *"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (errors.name) setErrors({ ...errors, name: "" });
+                  }}
+                  className={`border ${errors.name ? 'border-red-300' : 'border-teal-200'} rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 ${errors.name ? 'focus:ring-red-400' : 'focus:ring-teal-400'}`}
+                />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              </div>
+              <div>
+                <input
+                  type="email"
+                  placeholder="Email *"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors({ ...errors, email: "" });
+                  }}
+                  className={`border ${errors.email ? 'border-red-300' : 'border-teal-200'} rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 ${errors.email ? 'focus:ring-red-400' : 'focus:ring-teal-400'}`}
+                />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
             </div>
             <button
               onClick={handleCheckout}
-              className="w-full bg-teal-700 text-white px-6 py-3 rounded-lg hover:bg-teal-800 transition-all font-semibold shadow-md"
+              disabled={!cart.length}
+              className={`w-full px-6 py-3 rounded-lg font-semibold shadow-md transition-all ${
+                cart.length
+                  ? 'bg-teal-700 hover:bg-teal-800 text-white'
+                  : 'bg-gray-300 cursor-not-allowed text-gray-500'
+              }`}
             >
-              Proceed to Checkout
+              {cart.length ? 'Proceed to Checkout' : 'Cart is Empty'}
             </button>
           </div>
         </div>
       )}
 
+      {/* Receipt Modal */}
       {receipt && (
-        <div className="mt-10 p-6 border border-green-200 rounded-xl bg-green-50 text-green-800 shadow">
-          <h3 className="text-2xl font-semibold mb-2">✅ Receipt</h3>
-          <p>Name: <span className="font-bold">{receipt.name}</span></p>
-          <p>Email: <span className="font-bold">{receipt.email}</span></p>
-          <p>Total: <span className="font-bold">₹{receipt.total}</span></p>
-          <p>
-            Time:{" "}
-            <span className="font-bold">
-              {new Date(receipt.timestamp).toLocaleString()}
-            </span>
-          </p>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full mx-auto shadow-2xl relative overflow-hidden">
+            {/* Success Banner */}
+            <div className="bg-teal-700 text-white p-6 text-center relative">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-10 h-10 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold">Order Confirmed!</h3>
+              <p className="text-teal-100 mt-1">Thank you for your purchase</p>
+            </div>
+
+            {/* Receipt Details */}
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center pb-4 border-b">
+                  <span className="text-gray-600">Order ID</span>
+                  <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                    #{Math.random().toString(36).substr(2, 9).toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Name</span>
+                    <span className="font-semibold">{receipt.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Email</span>
+                    <span className="font-semibold">{receipt.email}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Date</span>
+                    <span className="font-semibold">
+                      {new Date(receipt.timestamp).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Time</span>
+                    <span className="font-semibold">
+                      {new Date(receipt.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Items</span>
+                    <span className="font-semibold">{receipt.items.length} items</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="text-xl font-bold text-gray-700">Total Amount</span>
+                    <span className="text-2xl font-bold text-teal-700">₹{receipt.total}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setReceipt(null)}
+                  className="flex-1 px-6 py-2.5 border border-teal-600 text-teal-700 rounded-lg hover:bg-teal-50 transition duration-200"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    // Here you could add functionality to download/print the receipt
+                    window.print();
+                  }}
+                  className="flex-1 px-6 py-2.5 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition duration-200"
+                >
+                  Download
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
