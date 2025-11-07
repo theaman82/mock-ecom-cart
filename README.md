@@ -19,7 +19,7 @@ It allows users to view products, add items to the cart, update quantities, and 
 
 🌱 Mock Data Seeding — Auto-seeds MongoDB with sample product data.
 
-🛠️ Tech Stack
+🛠️ Tech Stack : 
 Layer	Technology
 Frontend	React, Tailwind CSS, Axios, React Router DOM
 Backend	Node.js, Express.js
