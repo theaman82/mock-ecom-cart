@@ -5,19 +5,32 @@ export const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne().populate({
       path: "items.productId",
-      select: "name price _id"
+      select: "name price discountPrice image _id"
     });
     
     if (!cart) return res.json({ items: [], total: 0 });
 
-    let total = 0;
+    let subtotal = 0;
+    let discount = 0;
+    
     cart.items.forEach((item) => {
       if (item.productId && item.productId.price) {
-        total += item.productId.price * item.qty;
+        subtotal += item.productId.price * item.qty;
+        if (item.productId.discountPrice) {
+          discount += (item.productId.price - item.productId.discountPrice) * item.qty;
+        }
       }
     });
 
-    res.json({ items: cart.items, total });
+    const total = subtotal - discount;
+    res.json({ 
+      items: cart.items, 
+      summary: {
+        subtotal,
+        discount,
+        total
+      }
+    });
   } catch (err) {
     console.error("Error in getCart:", err);
     res.status(500).json({ message: "Server Error" });
@@ -45,7 +58,7 @@ export const addToCart = async (req, res) => {
     await cart.save();
     const populatedCart = await Cart.findById(cart._id).populate({
       path: "items.productId",
-      select: "name price _id"
+      select: "name price discountPrice image _id"
     });
     
     res.json(populatedCart);
