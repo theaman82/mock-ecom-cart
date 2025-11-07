@@ -50,7 +50,7 @@ const Cart = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-[8%] px-5">
+    <div className="max-w-6xl mx-auto py-[15%] md:py-[10%] px-5">
       {cart.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <svg

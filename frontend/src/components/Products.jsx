@@ -19,7 +19,7 @@ const Products = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-[8%]">
+    <div className="container mx-auto px-4 py-[15%] md:py-[10%]">
       <h2 className="text-3xl font-bold text-teal-700 mb-8 text-center tracking-tight">
         All Products
       </h2>
