@@ -77,7 +77,6 @@ const Cart = () => {
       const res = await checkout({ cartItems: formattedCart, name, email });
       setReceipt(res.data);
       refreshCart();
-      toast.success("Checkout successful!");
       
       // Clear form
       setName("");
@@ -255,7 +254,7 @@ const Cart = () => {
 
       {/* Receipt Modal */}
       {receipt && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+<div className="fixed inset-0 bg-black/40 backdrop-blur-lg flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-md w-full mx-auto shadow-2xl relative overflow-hidden">
             {/* Success Banner */}
             <div className="bg-teal-700 text-white p-6 text-center relative">
@@ -317,19 +316,11 @@ const Cart = () => {
               <div className="flex gap-3 mt-6">
                 <button
                   onClick={() => setReceipt(null)}
-                  className="flex-1 px-6 py-2.5 border border-teal-600 text-teal-700 rounded-lg hover:bg-teal-50 transition duration-200"
+                  className="flex-1 w-full px-6 py-2.5 border border-teal-600 text-teal-700 rounded-lg hover:bg-teal-50 transition duration-200"
                 >
                   Close
                 </button>
-                <button
-                  onClick={() => {
-                    // Here you could add functionality to download/print the receipt
-                    window.print();
-                  }}
-                  className="flex-1 px-6 py-2.5 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition duration-200"
-                >
-                  Download
-                </button>
+                
               </div>
             </div>
           </div>
