@@ -26,3 +26,7 @@ Backend	Node.js, Express.js
 Database	MongoDB with Mongoose
 Notifications	React Hot Toast
 Dev Tools	Nodemon, Vite
+
+## 🎥 Demo Video
+Watch the demo here: [https://www.loom.com/share/052cd808bb6747a3acf6b81b46242d53])
+
